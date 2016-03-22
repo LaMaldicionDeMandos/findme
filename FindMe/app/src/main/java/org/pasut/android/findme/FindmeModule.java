@@ -9,6 +9,6 @@ import com.google.inject.Module;
 public class FindmeModule implements Module {
     @Override
     public void configure(Binder binder) {
-        
+
     }
 }

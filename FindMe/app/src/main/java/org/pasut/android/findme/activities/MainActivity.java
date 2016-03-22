@@ -1,14 +1,16 @@
-package org.pasut.android.findme;
+package org.pasut.android.findme.activities;
 
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
 
+import org.pasut.android.findme.R;
+
 import roboguice.activity.RoboActionBarActivity;
 import roboguice.inject.ContentView;
 
-@ContentView(R.layout.activity_splash)
-public class SplashActivity extends RoboActionBarActivity {
+@ContentView(R.layout.activity_main)
+public class MainActivity extends RoboActionBarActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
