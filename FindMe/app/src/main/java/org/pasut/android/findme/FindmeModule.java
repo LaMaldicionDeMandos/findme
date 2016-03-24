@@ -7,6 +7,7 @@ import com.google.inject.Module;
 import org.pasut.android.findme.providers.FirebaseProvider;
 import org.pasut.android.findme.service.DefaultPreferencesService;
 import org.pasut.android.findme.service.PreferencesService;
+import org.pasut.android.findme.service.Services;
 
 /**
  * Created by boot on 3/4/16.
@@ -16,5 +17,6 @@ public class FindmeModule implements Module {
     public void configure(Binder binder) {
         binder.bind(PreferencesService.class).to(DefaultPreferencesService.class);
         binder.bind(Firebase.class).toProvider(FirebaseProvider.class);
+        binder.bind(Services.class);
     }
 }

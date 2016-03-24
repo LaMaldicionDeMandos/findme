@@ -16,6 +16,7 @@ import com.google.inject.Inject;
 
 import org.pasut.android.findme.R;
 import org.pasut.android.findme.service.PreferencesService;
+import org.pasut.android.findme.service.Services;
 
 import roboguice.activity.RoboActivity;
 import roboguice.inject.ContentView;
@@ -35,6 +36,9 @@ GoogleApiClient.OnConnectionFailedListener, ResultCallback {
 
     @Inject
     private PreferencesService preferences;
+
+    @Inject
+    private Services services;
 
     private GoogleApiClient googleClient;
 
@@ -89,8 +93,7 @@ GoogleApiClient.OnConnectionFailedListener, ResultCallback {
     @Override
     public void onConnected(Bundle bundle) {
         Log.d(TAG, "Connected");
-        //TODO
-        //saveUserAccount();
+        saveUserAccount();
     }
 
     @Override
@@ -103,8 +106,7 @@ GoogleApiClient.OnConnectionFailedListener, ResultCallback {
             String account = Plus.AccountApi.getAccountName(googleClient);
             Log.d(TAG, "Save google account: " + account);
             persistUserOnPreferences(account);
-            //TODO
-            //services.signUp(account);
+            services.signUp(account);
             startActivity(new Intent(this, MainActivity.class));
             finish();
         } else {

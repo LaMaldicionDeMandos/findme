@@ -9,6 +9,9 @@ import com.firebase.client.ValueEventListener;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
+import org.pasut.android.findme.model.UserProfile;
+import org.pasut.android.findme.model.UserState;
+
 /**
  * Created by boot on 10/2/15.
  */
@@ -30,12 +33,12 @@ public class Services {
                 Log.d(TAG, "Data changed " + dataSnapshot);
                 if (!dataSnapshot.exists()) {
                     //TODO
-                    //UserProfile userProfile = new UserProfile(UserState.ACTIVE);
-                    //firebase.child(userId).setValue(userProfile);
+                    UserProfile userProfile = new UserProfile(UserState.ACTIVE);
+                    firebase.child(userId).setValue(userProfile);
                 } else {
-                    //UserProfile userProfile = dataSnapshot.getValue(UserProfile.class);
-                    //userProfile.activate();
-                    //firebase.child(userId).setValue(userProfile);
+                    UserProfile userProfile = dataSnapshot.getValue(UserProfile.class);
+                    userProfile.activate();
+                    firebase.child(userId).setValue(userProfile);
                 }
             }
 
