@@ -16,7 +16,6 @@ import com.google.inject.Inject;
 
 import org.pasut.android.findme.R;
 import org.pasut.android.findme.service.PreferencesService;
-import org.pasut.android.findme.service.Services;
 
 import roboguice.activity.RoboActivity;
 import roboguice.inject.ContentView;
@@ -36,9 +35,6 @@ GoogleApiClient.OnConnectionFailedListener, ResultCallback {
 
     @Inject
     private PreferencesService preferences;
-
-    public static final String LOGIN = "login";
-    public static final String SIGN_UP = "sign up";
 
     private GoogleApiClient googleClient;
 
