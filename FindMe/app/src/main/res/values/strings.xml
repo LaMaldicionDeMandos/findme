@@ -3,4 +3,6 @@
     <string name="title_activity_splash">SplashActivity</string>
     <string name="title_activity_login">LoginActivity</string>
 
+    <!-- Error messages -->
+    <string name="login_error">Sign In Error</string>
 </resources>

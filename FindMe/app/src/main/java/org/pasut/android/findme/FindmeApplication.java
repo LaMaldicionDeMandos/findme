@@ -1,6 +1,8 @@
 package org.pasut.android.findme;
 
 import android.app.Application;
+import android.content.Context;
+import android.support.multidex.MultiDex;
 
 import com.firebase.client.Firebase;
 
@@ -16,9 +18,16 @@ public class FindmeApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+        MultiDex.install(this);
         Firebase.setAndroidContext(this);
         RoboGuice.setUseAnnotationDatabases(false);
         RoboGuice.getOrCreateBaseApplicationInjector(this, RoboGuice.DEFAULT_STAGE,
                 RoboGuice.newDefaultRoboModule(this), new FindmeModule());
+    }
+
+    @Override
+    protected void attachBaseContext(Context base) {
+        super.attachBaseContext(base);
+        MultiDex.install(this);
     }
 }
