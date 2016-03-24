@@ -77,5 +77,7 @@ dependencies {
     compile 'org.roboguice:roboguice:3.+'
     compile 'com.google.guava:guava:18.+'
 
+    compile 'com.firebase:firebase-client-android:2.4.0'
+
     compile 'com.pkmmte.view:circularimageview:1.1'
 }
