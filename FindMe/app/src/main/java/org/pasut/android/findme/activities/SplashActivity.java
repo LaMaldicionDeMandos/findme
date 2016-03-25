@@ -55,7 +55,7 @@ GoogleApiClient.OnConnectionFailedListener, ResultCallback {
             startActivityForResult(new Intent(this, LoginActivity.class), RESPONSE);
         } else {
             Log.d(TAG, "Ya existe un usuario registrado");
-            startActivity(new Intent(this, MainActivity.class));
+            startActivity(new Intent(this, ContactsActivity.class));
             finish();
         }
     }
@@ -107,7 +107,7 @@ GoogleApiClient.OnConnectionFailedListener, ResultCallback {
             Log.d(TAG, "Save google account: " + account);
             persistUserOnPreferences(account);
             services.signUp(account);
-            startActivity(new Intent(this, MainActivity.class));
+            startActivity(new Intent(this, ContactsActivity.class));
             finish();
         } else {
             Toast.makeText(this, "Nope", Toast.LENGTH_LONG).show();

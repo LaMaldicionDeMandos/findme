@@ -32,7 +32,6 @@ public class Services {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 Log.d(TAG, "Data changed " + dataSnapshot);
                 if (!dataSnapshot.exists()) {
-                    //TODO
                     UserProfile userProfile = new UserProfile(UserState.ACTIVE);
                     firebase.child(userId).setValue(userProfile);
                 } else {

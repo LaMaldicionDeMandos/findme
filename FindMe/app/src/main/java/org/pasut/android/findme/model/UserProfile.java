@@ -1,7 +1,6 @@
 package org.pasut.android.findme.model;
 
 import com.google.common.base.MoreObjects;
-import com.google.common.base.Objects;
 
 /**
  * Created by boot on 3/24/16.
