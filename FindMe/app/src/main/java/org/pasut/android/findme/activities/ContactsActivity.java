@@ -1,7 +1,9 @@
 package org.pasut.android.findme.activities;
 
 import android.content.ContentProviderOperation;
+import android.content.CursorLoader;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -30,6 +32,7 @@ import org.pasut.android.findme.model.UserProfile;
 import org.pasut.android.findme.model.UserState;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -218,6 +221,44 @@ public class ContactsActivity extends RoboActionBarActivity implements
             }
         });
         cursor.close();
+    }
+
+    public void addContact(View view) {
+        Intent intent = new Intent(Intent.ACTION_PICK);
+        intent.setType(ContactsContract.Contacts.CONTENT_TYPE);
+        startActivityForResult(intent, 1);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode == RESULT_OK && requestCode == 1) {
+            Uri contactData = data.getData();
+            Cursor userCursor =  getContentResolver().query(contactData, new String[] {
+                    ContactsContract.Contacts._ID,
+                    ContactsContract.Contacts.DISPLAY_NAME,
+                    ContactsContract.Contacts.PHOTO_URI
+
+            }, null, null, null);
+            if (userCursor.moveToFirst()) {
+                Cursor emailCursor = getContentResolver().query(ContactsContract.CommonDataKinds.Email.CONTENT_URI,
+                        new String[]{
+                                ContactsContract.RawContacts.CONTACT_ID,
+                                ContactsContract.CommonDataKinds.Email.ADDRESS
+                        }, ContactsContract.CommonDataKinds.Email.CONTACT_ID + "=?",
+                        new String[]{userCursor.getString(0)}, null);
+                if (emailCursor.moveToFirst()) {
+                    String id = emailCursor.getString(0);
+                    String email = emailCursor.getString(1);
+                    String name = userCursor.getString(1);
+                    String photo = userCursor.getString(2);
+                    Uri uri = photo == null ? null : Uri.parse(photo);
+                    User user = new User(email, name, uri, new UserProfile(UserState.UNKNOW));
+                    addContact(id, user);
+                    contacts.add(user);
+                    listView.getAdapter().notifyDataSetChanged();
+                }
+            }
+        }
     }
 
     class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.ViewHolder> {
