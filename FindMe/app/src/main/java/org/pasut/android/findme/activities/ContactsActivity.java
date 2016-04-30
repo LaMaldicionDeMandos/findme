@@ -20,6 +20,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -256,9 +257,17 @@ public class ContactsActivity extends RoboActionBarActivity implements
                     addContact(id, user);
                     contacts.add(user);
                     listView.getAdapter().notifyDataSetChanged();
+                } else {
+                    String userName = userCursor.getString(1);
+                    showNotEmailUser(userName);
                 }
             }
         }
+    }
+
+    private void showNotEmailUser(final String userName) {
+        String message = getString(R.string.not_email_message);
+        Toast.makeText(this, String.format(message, userName), Toast.LENGTH_LONG).show();
     }
 
     class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.ViewHolder> {
