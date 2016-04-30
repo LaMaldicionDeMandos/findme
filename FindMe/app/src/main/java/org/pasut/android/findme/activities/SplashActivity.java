@@ -1,7 +1,11 @@
 package org.pasut.android.findme.activities;
 
+import android.Manifest;
+import android.annotation.TargetApi;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.drawable.AnimationDrawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.ImageView;
@@ -29,6 +33,7 @@ import static org.pasut.android.findme.activities.ActivityUtils.getGoogleClient;
 public class SplashActivity extends RoboActivity implements GoogleApiClient.ConnectionCallbacks,
 GoogleApiClient.OnConnectionFailedListener, ResultCallback {
     public final static int RESPONSE = 1;
+    private final static int PERMISSION_REQUEST = 11212;
     private final static String TAG = SplashActivity.class.getSimpleName();
 
     @InjectView(R.id.splash)
@@ -103,15 +108,34 @@ GoogleApiClient.OnConnectionFailedListener, ResultCallback {
 
     private void saveUserAccount() {
         if (!preferences.contain(MASTER_USER_KEY)) {
-            String account = Plus.AccountApi.getAccountName(googleClient);
-            Log.d(TAG, "Save google account: " + account);
-            persistUserOnPreferences(account);
-            services.signUp(account);
-            startActivity(new Intent(this, ContactsActivity.class));
-            finish();
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                requestPermissions(new String[]{Manifest.permission.GET_ACCOUNTS}, PERMISSION_REQUEST);
+            } else {
+                persistAccount();
+            }
         } else {
             Toast.makeText(this, "Nope", Toast.LENGTH_LONG).show();
             finish();
+        }
+    }
+
+    private void persistAccount() {
+        String account = Plus.AccountApi.getAccountName(googleClient);
+        Log.d(TAG, "Save google account: " + account);
+        persistUserOnPreferences(account);
+        services.signUp(account);
+        startActivity(new Intent(this, ContactsActivity.class));
+        finish();
+    }
+
+    @TargetApi(Build.VERSION_CODES.M)
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        if (requestCode == PERMISSION_REQUEST) {
+            if (checkSelfPermission(Manifest.permission.GET_ACCOUNTS) != PackageManager.PERMISSION_GRANTED && checkSelfPermission(Manifest.permission.GET_ACCOUNTS) != PackageManager.PERMISSION_GRANTED) {
+                return;
+            }
+            persistAccount();
         }
     }
 
