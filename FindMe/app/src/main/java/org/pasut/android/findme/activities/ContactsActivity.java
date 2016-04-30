@@ -1,7 +1,6 @@
 package org.pasut.android.findme.activities;
 
 import android.content.ContentProviderOperation;
-import android.content.CursorLoader;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
@@ -25,7 +24,6 @@ import android.widget.Toast;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.api.client.util.Sets;
-import com.google.common.collect.Lists;
 
 import org.pasut.android.findme.R;
 import org.pasut.android.findme.model.User;
@@ -33,7 +31,6 @@ import org.pasut.android.findme.model.UserProfile;
 import org.pasut.android.findme.model.UserState;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -286,6 +283,7 @@ public class ContactsActivity extends RoboActionBarActivity implements
         @Override
         public void onBindViewHolder(ViewHolder contactViewHolder, int i) {
             contactViewHolder.name.setText(contacts.get(i).getName());
+            contactViewHolder.email.setText(contacts.get(i).getId());
             if (contacts.get(i).getUri() == null) {
                 contactViewHolder.photo.setImageResource(R.drawable.ic_account_circle);
             } else {
@@ -300,11 +298,13 @@ public class ContactsActivity extends RoboActionBarActivity implements
 
         class ViewHolder extends RecyclerView.ViewHolder {
             private final TextView name;
+            private final TextView email;
             private final ImageView photo;
 
             public ViewHolder(View itemView) {
                 super(itemView);
-                name = (TextView)itemView.findViewById(R.id.text);
+                name = (TextView)itemView.findViewById(R.id.username);
+                email = (TextView)itemView.findViewById(R.id.email);
                 photo = (ImageView)itemView.findViewById(R.id.photo);
             }
         }

@@ -5,6 +5,7 @@
     android:layout_height="match_parent"
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingBottom="@dimen/activity_horizontal_margin"
     android:orientation="horizontal">
     <com.pkmmte.view.CircularImageView android:id="@+id/photo"
         android:layout_width="@dimen/contact_image"
@@ -12,11 +13,24 @@
         android:src="@drawable/ic_account_circle"
         app:shadow="true"
         android:layout_margin="@dimen/item_margin" />
-    <TextView android:id="@+id/text"
-        android:layout_gravity="center_vertical"
+    <RelativeLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="@dimen/item_margin"
-        android:textSize="@dimen/item_text" />
+        android:layout_gravity="center">
+        <TextView android:id="@+id/username"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/item_text"
+            android:text="Aida" />
+        <TextView android:id="@+id/email"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/item_secondary_text"
+            android:textColor="@color/secondary_text"
+            android:text="anbenito@yahoo.com.ar"
+            android:layout_below="@+id/username"
+            android:layout_alignLeft="@+id/username"
+            android:layout_alignStart="@+id/username" />
+    </RelativeLayout>
 
 </LinearLayout>

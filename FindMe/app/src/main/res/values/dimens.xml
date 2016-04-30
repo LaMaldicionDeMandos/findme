@@ -6,7 +6,8 @@
     <dimen name="logo_text_size">68sp</dimen>
     <dimen name="logo_text_gap">2dp</dimen>
 
-    <dimen name="contact_image">50dp</dimen>
+    <dimen name="contact_image">46dp</dimen>
     <dimen name="item_margin">5dp</dimen>
     <dimen name="item_text">15sp</dimen>
+    <dimen name="item_secondary_text">12sp</dimen>
 </resources>
