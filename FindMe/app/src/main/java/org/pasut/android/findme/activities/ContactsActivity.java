@@ -122,6 +122,7 @@ public class ContactsActivity extends RoboActionBarActivity implements
         if (count == 0) {
             actionMode.finish();
         } else {
+            toolbar.setTitle("");
             actionMode.setTitle(String.valueOf(count));
             actionMode.invalidate();
         }
@@ -460,6 +461,7 @@ public class ContactsActivity extends RoboActionBarActivity implements
         @Override
         public void onDestroyActionMode(ActionMode mode) {
             adapter.clearSelection();
+            toolbar.setTitle(R.string.contacts);
             actionMode = null;
         }
     }
