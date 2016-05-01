@@ -30,6 +30,8 @@ import android.widget.Toast;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.api.client.util.Sets;
+import com.google.common.collect.Collections2;
+import com.google.common.collect.Iterables;
 
 import org.pasut.android.findme.R;
 import org.pasut.android.findme.model.User;
@@ -37,6 +39,7 @@ import org.pasut.android.findme.model.UserProfile;
 import org.pasut.android.findme.model.UserState;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
@@ -353,6 +356,20 @@ public class ContactsActivity extends RoboActionBarActivity implements
             return contacts.size();
         }
 
+        public void removeItems() {
+            removeItems(getSelectedItems());
+            selectedItems.clear();
+            notifyDataSetChanged();
+        }
+
+        private void removeItems(List<Integer> positions) {
+            Collections.sort(positions);
+            Collections.reverse(positions);
+            for (Integer index : positions) {
+                contacts.remove(index.intValue());
+            }
+        }
+
         public static class ViewHolder extends RecyclerView.ViewHolder implements View.OnLongClickListener,
         View.OnClickListener {
             private final TextView name;
@@ -447,9 +464,8 @@ public class ContactsActivity extends RoboActionBarActivity implements
         public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
             switch (item.getItemId()) {
                 case R.id.action_delete:
-                    // TODO: actually remove items
                     Log.d(TAG, "menu_remove");
-                    Toast.makeText(getBaseContext(),"Deleting item", Toast.LENGTH_LONG).show();
+                    adapter.removeItems();
                     mode.finish();
                     return true;
 
