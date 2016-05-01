@@ -11,7 +11,8 @@
     <android.support.v7.widget.RecyclerView android:id="@+id/contacts"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/toolbar"/>
+        android:foreground="?android:attr/selectableItemBackground"
+        android:layout_below="@+id/toolbar" />
     <android.support.design.widget.FloatingActionButton
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

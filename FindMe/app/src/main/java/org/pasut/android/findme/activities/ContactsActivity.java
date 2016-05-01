@@ -1,6 +1,7 @@
 package org.pasut.android.findme.activities;
 
 import android.content.ContentProviderOperation;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
@@ -10,11 +11,16 @@ import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.view.ActionMode;
+import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -47,8 +53,15 @@ public class ContactsActivity extends RoboActionBarActivity implements
     public static final String FINDME_COM = "findme.com";
     private final static String TAG = ContactsActivity.class.getSimpleName();
 
+    private ContactsAdapter adapter;
+    private ActionModeCallback actionModeCallback = new ActionModeCallback();
+    private ActionMode actionMode;
+
     @InjectView(R.id.contacts)
     private RecyclerView listView;
+
+    @InjectView(R.id.toolbar)
+    Toolbar toolbar;
 
     private GoogleApiClient googleClient;
 
@@ -77,13 +90,44 @@ public class ContactsActivity extends RoboActionBarActivity implements
             }
         }.execute();
         Log.d(TAG, contacts.toString());
-        RecyclerView.Adapter<ContactsAdapter.ViewHolder> adapter = new ContactsAdapter(contacts);
+        adapter = new ContactsAdapter(this, contacts,
+                new ContactsAdapter.ViewHolder.ClickListener() {
+                    @Override
+                    public void onItemClicked(int position) {
+                        if (actionMode != null) {
+                            toggleSelection(position);
+                        }
+                    }
+
+                    @Override
+                    public boolean onItemLongClicked(int position) {
+                        if (actionMode == null) {
+                            actionMode = startSupportActionMode(actionModeCallback);
+                        }
+
+                        toggleSelection(position);
+                        return true;
+                    }
+                });
         listView.setLayoutManager(new LinearLayoutManager(this));
         listView.setAdapter(adapter);
+
+        listView.setItemAnimator(new DefaultItemAnimator());
+    }
+
+    private void toggleSelection(int position) {
+        adapter.toggleSelection(position);
+        int count = adapter.getSelectedItemCount();
+
+        if (count == 0) {
+            actionMode.finish();
+        } else {
+            actionMode.setTitle(String.valueOf(count));
+            actionMode.invalidate();
+        }
     }
 
     private void setupToolbar(){
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         // Show menu icon
         final ActionBar ab = getSupportActionBar();
@@ -267,17 +311,26 @@ public class ContactsActivity extends RoboActionBarActivity implements
         Toast.makeText(this, String.format(message, userName), Toast.LENGTH_LONG).show();
     }
 
-    class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.ViewHolder> {
+    static class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.ViewHolder> {
         private final List<User> contacts;
+        private final SparseBooleanArray selectedItems;
+        private final Context context;
 
-        public ContactsAdapter(final List<User> contacts) {
+        private ViewHolder.ClickListener clickListener;
+
+        public ContactsAdapter(final Context context, final List<User> contacts,
+                               final ViewHolder.ClickListener listener) {
+            this.context = context;
             this.contacts = contacts;
+            this.selectedItems = new SparseBooleanArray();
+            this.clickListener = listener;
         }
+
         @Override
         public ViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
-            View v = LayoutInflater.from(ContactsActivity.this)
+            View v = LayoutInflater.from(context)
                     .inflate(R.layout.view_contact, viewGroup, false);
-            return new ViewHolder(v);
+            return new ViewHolder(v, clickListener);
         }
 
         @Override
@@ -289,6 +342,9 @@ public class ContactsActivity extends RoboActionBarActivity implements
             } else {
                 contactViewHolder.photo.setImageURI(contacts.get(i).getUri());
             }
+            contactViewHolder.layout.setBackgroundResource(isSelected(i)
+                    ? R.color.selected_item
+                    : R.color.background);
         }
 
         @Override
@@ -296,17 +352,115 @@ public class ContactsActivity extends RoboActionBarActivity implements
             return contacts.size();
         }
 
-        class ViewHolder extends RecyclerView.ViewHolder {
+        public static class ViewHolder extends RecyclerView.ViewHolder implements View.OnLongClickListener,
+        View.OnClickListener {
             private final TextView name;
             private final TextView email;
             private final ImageView photo;
+            private final View layout;
 
-            public ViewHolder(View itemView) {
+            private ClickListener listener;
+
+            public ViewHolder(View itemView, ClickListener listener) {
                 super(itemView);
+                this.listener = listener;
                 name = (TextView)itemView.findViewById(R.id.username);
                 email = (TextView)itemView.findViewById(R.id.email);
                 photo = (ImageView)itemView.findViewById(R.id.photo);
+                layout = itemView.findViewById(R.id.layout);
+                itemView.setOnLongClickListener(this);
+                itemView.setOnClickListener(this);
             }
+
+            @Override
+            public boolean onLongClick(View v) {
+                if (listener != null) {
+                    return listener.onItemLongClicked(getLayoutPosition());
+                }
+                return false;
+            }
+
+            @Override
+            public void onClick(View v) {
+                if (listener != null) {
+                    listener.onItemClicked(getLayoutPosition());
+                }
+            }
+
+            interface ClickListener {
+                void onItemClicked(int position);
+                boolean onItemLongClicked(int position);
+            }
+        }
+
+        public boolean isSelected(final int position) {
+            return getSelectedItems().contains(position);
+        }
+
+        public void toggleSelection(int position) {
+            if (selectedItems.get(position, false)) {
+                selectedItems.delete(position);
+            } else {
+                selectedItems.put(position, true);
+            }
+            notifyItemChanged(position);
+        }
+
+        public void clearSelection() {
+            List<Integer> selection = getSelectedItems();
+            selectedItems.clear();
+            for (Integer i : selection) {
+                notifyItemChanged(i);
+            }
+        }
+
+        public int getSelectedItemCount() {
+            return selectedItems.size();
+        }
+
+        public List<Integer> getSelectedItems() {
+            List<Integer> items = new ArrayList<>(selectedItems.size());
+            for (int i = 0; i < selectedItems.size(); ++i) {
+                items.add(selectedItems.keyAt(i));
+            }
+            return items;
+        }
+    }
+
+    private class ActionModeCallback implements ActionMode.Callback {
+        @SuppressWarnings("unused")
+        private final String TAG = ActionModeCallback.class.getSimpleName();
+
+        @Override
+        public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+            mode.getMenuInflater().inflate(R.menu.menu_contacts, menu);
+            return true;
+        }
+
+        @Override
+        public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+            return false;
+        }
+
+        @Override
+        public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+            switch (item.getItemId()) {
+                case R.id.action_delete:
+                    // TODO: actually remove items
+                    Log.d(TAG, "menu_remove");
+                    Toast.makeText(getBaseContext(),"Deleting item", Toast.LENGTH_LONG).show();
+                    mode.finish();
+                    return true;
+
+                default:
+                    return false;
+            }
+        }
+
+        @Override
+        public void onDestroyActionMode(ActionMode mode) {
+            adapter.clearSelection();
+            actionMode = null;
         }
     }
 }

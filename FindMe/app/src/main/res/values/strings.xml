@@ -12,4 +12,6 @@
 
     <!-- Error messages -->
     <string name="login_error">Sign In Error</string>
+
+    <string name="action_delete">Delete</string>
 </resources>
