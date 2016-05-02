@@ -29,6 +29,7 @@ import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.api.client.util.Lists;
 import com.google.api.client.util.Sets;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.Iterables;
@@ -315,6 +316,18 @@ public class ContactsActivity extends RoboActionBarActivity implements
         Toast.makeText(this, String.format(message, userName), Toast.LENGTH_LONG).show();
     }
 
+    private void removeContacts(final List<User> users) {
+        Uri uri = ContactsContract.RawContacts.CONTENT_URI;
+        int count = 0;
+        for( User user : users) {
+            count+= getContentResolver().delete(
+                    uri,
+                    ContactsContract.RawContacts.ACCOUNT_TYPE + " like '" + FINDME_COM + "' and " +
+                    ContactsContract.RawContacts.ACCOUNT_NAME + " = '" + user.getId() + "'", null);
+        }
+        Toast.makeText(this, "Deleted " + count + " contacts.", Toast.LENGTH_SHORT).show();
+    }
+
     static class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.ViewHolder> {
         private final List<User> contacts;
         private final SparseBooleanArray selectedItems;
@@ -344,7 +357,11 @@ public class ContactsActivity extends RoboActionBarActivity implements
             if (contacts.get(i).getUri() == null) {
                 contactViewHolder.photo.setImageResource(R.drawable.ic_account_circle);
             } else {
-                contactViewHolder.photo.setImageURI(contacts.get(i).getUri());
+                try {
+                    contactViewHolder.photo.setImageURI(contacts.get(i).getUri());
+                } catch(NullPointerException e) {
+                    Log.e(TAG, e.getMessage());
+                }
             }
             contactViewHolder.layout.setBackgroundResource(isSelected(i)
                     ? R.color.selected_item
@@ -356,18 +373,23 @@ public class ContactsActivity extends RoboActionBarActivity implements
             return contacts.size();
         }
 
-        public void removeItems() {
-            removeItems(getSelectedItems());
+        public List<User> removeItems() {
+            List<User> users = removeItems(getSelectedItems());
             selectedItems.clear();
             notifyDataSetChanged();
+            return users;
         }
 
-        private void removeItems(List<Integer> positions) {
+        private List<User> removeItems(List<Integer> positions) {
+            List<User> users = Lists.newArrayList();
             Collections.sort(positions);
             Collections.reverse(positions);
             for (Integer index : positions) {
-                contacts.remove(index.intValue());
+                User user = contacts.get(index.intValue());
+                contacts.remove(user);
+                users.add(user);
             }
+            return users;
         }
 
         public static class ViewHolder extends RecyclerView.ViewHolder implements View.OnLongClickListener,
@@ -465,7 +487,7 @@ public class ContactsActivity extends RoboActionBarActivity implements
             switch (item.getItemId()) {
                 case R.id.action_delete:
                     Log.d(TAG, "menu_remove");
-                    adapter.removeItems();
+                    removeContacts(adapter.removeItems());
                     mode.finish();
                     return true;
 
