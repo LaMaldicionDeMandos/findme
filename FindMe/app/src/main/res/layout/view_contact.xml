@@ -8,6 +8,7 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/item_margin"
     android:paddingBottom="@dimen/item_margin"
+    android:foreground="?android:attr/selectableItemBackground"
     android:orientation="horizontal">
     <com.pkmmte.view.CircularImageView android:id="@+id/photo"
         android:layout_width="@dimen/contact_image"

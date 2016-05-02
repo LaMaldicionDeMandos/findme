@@ -325,7 +325,6 @@ public class ContactsActivity extends RoboActionBarActivity implements
                     ContactsContract.RawContacts.ACCOUNT_TYPE + " like '" + FINDME_COM + "' and " +
                     ContactsContract.RawContacts.ACCOUNT_NAME + " = '" + user.getId() + "'", null);
         }
-        Toast.makeText(this, "Deleted " + count + " contacts.", Toast.LENGTH_SHORT).show();
     }
 
     static class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.ViewHolder> {
