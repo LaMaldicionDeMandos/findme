@@ -15,4 +15,8 @@
     <string name="login_error">Sign In Error</string>
 
     <string name="action_delete">Delete</string>
+    <string name="title_activity_prepare_search">PrepareSearchActivity</string>
+
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
 </resources>

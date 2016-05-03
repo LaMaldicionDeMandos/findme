@@ -41,6 +41,10 @@
             android:name=".activities.LoginActivity"
             android:label="@string/title_activity_login" >
         </activity>
+        <activity
+            android:name=".activities.PrepareSearchActivity"
+            android:label="@string/title_activity_prepare_search" >
+        </activity>
     </application>
 
 </manifest>

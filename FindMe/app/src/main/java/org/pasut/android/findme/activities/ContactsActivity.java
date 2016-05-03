@@ -103,6 +103,8 @@ public class ContactsActivity extends RoboActionBarActivity implements
                     public void onItemClicked(int position) {
                         if (actionMode != null) {
                             toggleSelection(position);
+                        } else {
+                            startSearchActivity(adapter.contacts.get(position));
                         }
                     }
 
@@ -120,6 +122,12 @@ public class ContactsActivity extends RoboActionBarActivity implements
         listView.setAdapter(adapter);
 
         listView.setItemAnimator(new DefaultItemAnimator());
+    }
+
+    private void startSearchActivity(User user) {
+        Intent intent = new Intent(this, PrepareSearchActivity.class);
+        intent.putExtra(PrepareSearchActivity.CONTACT, user);
+        startActivity(intent);
     }
 
     private void toggleSelection(int position) {
