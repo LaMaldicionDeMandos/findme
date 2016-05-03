@@ -5,6 +5,8 @@ import android.net.Uri;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Objects;
 
+import java.util.Date;
+
 /**
  * Created by boot on 3/24/16.
  */
@@ -13,12 +15,19 @@ public class User {
     private final String name;
     private final UserProfile profile;
     private final Uri uri;
+    private final long lastAccess;
 
     public User(final String id, final String name, final Uri uri, final UserProfile profile) {
+        this(id, name, uri, profile, new Date().getTime());
+    }
+
+    public User(final String id, final String name, final Uri uri, final UserProfile profile,
+                final long lastAccess) {
         this.id = id;
         this.name = name;
         this.profile = profile;
         this.uri = uri;
+        this.lastAccess = lastAccess;
     }
 
     public String getId() {
@@ -35,6 +44,10 @@ public class User {
 
     public UserProfile getProfile() {
         return profile;
+    }
+
+    public long getLastAccess() {
+        return lastAccess;
     }
 
     @Override
@@ -57,6 +70,7 @@ public class User {
                 .add("name", name)
                 .add("avatar", uri)
                 .add("profile", profile)
+                .add("lastAccess", lastAccess)
                 .toString();
     }
 }

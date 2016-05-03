@@ -33,6 +33,7 @@ import com.google.api.client.util.Lists;
 import com.google.api.client.util.Sets;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.Iterables;
+import com.google.common.collect.Iterators;
 
 import org.pasut.android.findme.R;
 import org.pasut.android.findme.model.User;
@@ -41,6 +42,8 @@ import org.pasut.android.findme.model.UserState;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
@@ -210,7 +213,7 @@ public class ContactsActivity extends RoboActionBarActivity implements
             String photo = cursor.getString(3);
             Log.d(TAG, id + " display name: " + name + " Email: " + email + " Photo: " + photo);
             uri = photo == null ? null : Uri.parse(photo);
-            User user = new User(email, name, uri, new UserProfile(UserState.UNKNOW));
+            User user = new User(email, name, uri, new UserProfile(UserState.UNKNOW), new Date().getTime());
             if (!users.contains(user)) {
                 addContact(id, user);
             }
@@ -226,11 +229,14 @@ public class ContactsActivity extends RoboActionBarActivity implements
         ContentProviderOperation op = ContentProviderOperation.newInsert(ContactsContract.RawContacts.CONTENT_URI)
                 .withValue(ContactsContract.RawContacts.ACCOUNT_TYPE, FINDME_COM)
                 .withValue(ContactsContract.RawContacts.CONTACT_ID, id)
-                .withValue(ContactsContract.RawContacts.ACCOUNT_NAME, user.getId()).build();
+                .withValue(ContactsContract.RawContacts.ACCOUNT_NAME, user.getId())
+                .withValue(ContactsContract.RawContacts.LAST_TIME_CONTACTED, user.getLastAccess())
+                .build();
         ops.add(op);
         op = ContentProviderOperation.newInsert(ContactsContract.Data.CONTENT_URI)
                 .withValueBackReference(ContactsContract.Data.RAW_CONTACT_ID, 0)
                 .withValue(ContactsContract.Data.MIMETYPE, ContactsContract.CommonDataKinds.StructuredName.CONTENT_ITEM_TYPE)
+                .withValue(ContactsContract.CommonDataKinds.StructuredName.DISPLAY_NAME, user.getName())
                 .withValue(ContactsContract.CommonDataKinds.StructuredName.DISPLAY_NAME, user.getName())
                 .build();
         ops.add(op);
@@ -248,7 +254,10 @@ public class ContactsActivity extends RoboActionBarActivity implements
         Uri uri = ContactsContract.Contacts.CONTENT_URI;
         uri = Uri.withAppendedPath(uri, ContactsContract.Contacts.Entity.CONTENT_DIRECTORY);
         Cursor cursor = getContentResolver().query(uri,
-                new String[]{ContactsContract.RawContacts.ACCOUNT_NAME, ContactsContract.CommonDataKinds.StructuredName.DISPLAY_NAME, ContactsContract.Contacts.Photo.PHOTO_URI},
+                new String[]{ContactsContract.RawContacts.ACCOUNT_NAME,
+                ContactsContract.CommonDataKinds.StructuredName.DISPLAY_NAME,
+                ContactsContract.Contacts.Photo.PHOTO_URI,
+                ContactsContract.RawContacts.LAST_TIME_CONTACTED},
                 ContactsContract.RawContacts.ACCOUNT_TYPE + " like '" + FINDME_COM + "'",
                 null, null);
         for (int i = 0; i < cursor.getCount(); i++) {
@@ -256,9 +265,10 @@ public class ContactsActivity extends RoboActionBarActivity implements
             String email = cursor.getString(0);
             String name = cursor.getString(1);
             String photo = cursor.getString(2);
+            long lastAccess = cursor.getLong(3);
             Log.d(TAG, "Found: display name: " + name + " Email: " + email + " Photo: " + photo);
             uri = photo == null ? null : Uri.parse(photo);
-            User user = new User(email, name, uri, new UserProfile(UserState.UNKNOW));
+            User user = new User(email, name, uri, new UserProfile(UserState.UNKNOW), lastAccess);
             contacts.add(user);
         }
         runOnUiThread(new Runnable() {
@@ -268,6 +278,12 @@ public class ContactsActivity extends RoboActionBarActivity implements
             }
         });
         cursor.close();
+        Collections.sort(contacts, new Comparator<User>() {
+            @Override
+            public int compare(User lhs, User rhs) {
+                return (int)(rhs.getLastAccess() - lhs.getLastAccess());
+            }
+        });
     }
 
     public void addContact(View view) {
