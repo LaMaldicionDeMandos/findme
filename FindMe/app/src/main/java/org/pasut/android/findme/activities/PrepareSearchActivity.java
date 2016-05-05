@@ -18,7 +18,7 @@ public class PrepareSearchActivity extends RoboActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         User contact = getIntent().getParcelableExtra(CONTACT);
-        TextView text = (TextView) findViewById(R.id.texto);
+        TextView text = (TextView) findViewById(R.id.name);
         text.setText(contact.getName());
     }
 }

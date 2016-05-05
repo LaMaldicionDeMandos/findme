@@ -23,6 +23,7 @@
         <TextView android:id="@+id/username"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:transitionName="name"
             android:textSize="@dimen/item_text" />
 
         <TextView android:id="@+id/email"

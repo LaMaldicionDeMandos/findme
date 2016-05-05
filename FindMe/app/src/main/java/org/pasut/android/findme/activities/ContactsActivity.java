@@ -1,5 +1,6 @@
 package org.pasut.android.findme.activities;
 
+import android.app.ActivityOptions;
 import android.content.ContentProviderOperation;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -7,6 +8,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.support.v7.app.ActionBar;
@@ -16,6 +18,9 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.transition.Explode;
+import android.transition.Fade;
+import android.transition.Slide;
 import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
@@ -23,6 +28,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -31,9 +37,6 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.api.client.util.Lists;
 import com.google.api.client.util.Sets;
-import com.google.common.collect.Collections2;
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Iterators;
 
 import org.pasut.android.findme.R;
 import org.pasut.android.findme.model.User;
@@ -76,6 +79,9 @@ public class ContactsActivity extends RoboActionBarActivity implements
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            getWindow().requestFeature(Window.FEATURE_CONTENT_TRANSITIONS);
+        }
         super.onCreate(savedInstanceState);
         setupToolbar();
 
@@ -100,11 +106,11 @@ public class ContactsActivity extends RoboActionBarActivity implements
         adapter = new ContactsAdapter(this, contacts,
                 new ContactsAdapter.ViewHolder.ClickListener() {
                     @Override
-                    public void onItemClicked(int position) {
+                    public void onItemClicked(int position, View view) {
                         if (actionMode != null) {
                             toggleSelection(position);
                         } else {
-                            startSearchActivity(adapter.contacts.get(position));
+                            startSearchActivity(adapter.contacts.get(position), view.findViewById(R.id.username));
                         }
                     }
 
@@ -124,10 +130,17 @@ public class ContactsActivity extends RoboActionBarActivity implements
         listView.setItemAnimator(new DefaultItemAnimator());
     }
 
-    private void startSearchActivity(User user) {
+    private void startSearchActivity(User user, View view) {
         Intent intent = new Intent(this, PrepareSearchActivity.class);
         intent.putExtra(PrepareSearchActivity.CONTACT, user);
-        startActivity(intent);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            getWindow().setExitTransition(new Fade());
+            ActivityOptions options = ActivityOptions
+                    .makeSceneTransitionAnimation(this, view, "name");
+            startActivity(intent, options.toBundle());
+        } else {
+            startActivity(intent);
+        }
     }
 
     private void toggleSelection(int position) {
@@ -446,12 +459,12 @@ public class ContactsActivity extends RoboActionBarActivity implements
             @Override
             public void onClick(View v) {
                 if (listener != null) {
-                    listener.onItemClicked(getLayoutPosition());
+                    listener.onItemClicked(getLayoutPosition(), v);
                 }
             }
 
             interface ClickListener {
-                void onItemClicked(int position);
+                void onItemClicked(int position, View view);
                 boolean onItemLongClicked(int position);
             }
         }
