@@ -4,6 +4,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
+import android.transition.AutoTransition;
 import android.transition.Explode;
 import android.transition.TransitionManager;
 import android.util.Log;
@@ -11,7 +12,10 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import org.pasut.android.findme.R;
@@ -26,17 +30,32 @@ public class PrepareSearchActivity extends RoboActionBarActivity {
     private final static String TAG = PrepareSearchActivity.class.getSimpleName();
     public final static String CONTACT = "contact";
 
+    @InjectView(R.id.main)
+    ViewGroup main;
+
     @InjectView(R.id.toolbar)
     Toolbar toolbar;
 
+    @InjectView(R.id.header)
+    ViewGroup header;
+
     @InjectView(R.id.main_container)
-    ViewGroup main;
+    ViewGroup mainContainer;
 
     @InjectView(R.id.search_photo)
     View searchPhoto;
 
+    @InjectView(R.id.find_text)
+    TextView findText;
+
     @InjectView(R.id.call)
     View callButton;
+
+    @InjectView(R.id.circle1)
+    View circle1;
+
+    @InjectView(R.id.circle2)
+    View circle2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -87,39 +106,25 @@ public class PrepareSearchActivity extends RoboActionBarActivity {
                 Log.e(TAG, e.getMessage());
             }
         }
+        findText.setText(String.format(getString(R.string.searching_person), user.getName()));
     }
 
     public void search(View view) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            Explode transition = new Explode();
-            TransitionManager.beginDelayedTransition(main, transition);
+            TransitionManager.beginDelayedTransition(main, new Explode());
         }
-
+        findText.setVisibility(View.VISIBLE);
         searchPhoto.setVisibility(View.VISIBLE);
         callButton.setVisibility(View.INVISIBLE);
+        circle1.setVisibility(View.VISIBLE);
+        circle2.setVisibility(View.VISIBLE);
+        //header.setLayoutParams(new RelativeLayout.LayoutParams(header.getWidth(), 0));
+        header.setVisibility(View.GONE);
+        toolbar.setBackgroundColor(getResources().getColor(R.color.primary));
 
-
-        //Animation animation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.clockwise);
-        //myView.startAnimation(animation);
-/*
-        // get the center for the clipping circle
-        int cx = (myView.getLeft() + myView.getRight()) / 2;
-        int cy = (myView.getTop() + myView.getBottom()) / 2;
-
-        // get the final radius for the clipping circle
-        int finalRadius = Math.max(myView.getWidth(), myView.getHeight());
-
-        // create the animator for this view (the start radius is zero)
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            Animator anim =
-                    ViewAnimationUtils.createCircularReveal(myView, cx, cy, 0, finalRadius);
-
-            // make the view visible and start the animation
-            anim.start();
-        } else {
-            Animation animation = AnimationUtils.loadAnimation(getApplicationContext(), android.R.anim.fade_in);
-            myView.startAnimation(animation);
-        }
-        */
+        Animation anim1 = AnimationUtils.loadAnimation(this, R.anim.expand1);
+        Animation anim2 = AnimationUtils.loadAnimation(this, R.anim.expand2);
+        circle1.startAnimation(anim1);
+        circle2.startAnimation(anim2);
     }
 }
