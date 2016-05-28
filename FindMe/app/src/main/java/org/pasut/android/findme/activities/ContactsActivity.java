@@ -18,9 +18,7 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.transition.Explode;
 import android.transition.Fade;
-import android.transition.Slide;
 import android.util.Log;
 import android.util.Pair;
 import android.util.SparseBooleanArray;
@@ -73,6 +71,9 @@ public class ContactsActivity extends RoboActionBarActivity implements
 
     @InjectView(R.id.toolbar)
     Toolbar toolbar;
+
+    @InjectView(R.id.action_button)
+    View actionButton;
 
     private GoogleApiClient googleClient;
 
@@ -141,7 +142,8 @@ public class ContactsActivity extends RoboActionBarActivity implements
             ActivityOptions options = ActivityOptions
                     .makeSceneTransitionAnimation(this,
                             Pair.create(name, "name"),
-                            Pair.create(photo, "photo"));
+                            Pair.create(photo, "photo"),
+                            Pair.create(actionButton, "action"));
             startActivity(intent, options.toBundle());
         } else {
             startActivity(intent);
