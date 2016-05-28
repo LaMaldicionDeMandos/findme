@@ -22,6 +22,7 @@ import android.transition.Explode;
 import android.transition.Fade;
 import android.transition.Slide;
 import android.util.Log;
+import android.util.Pair;
 import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -110,7 +111,9 @@ public class ContactsActivity extends RoboActionBarActivity implements
                         if (actionMode != null) {
                             toggleSelection(position);
                         } else {
-                            startSearchActivity(adapter.contacts.get(position), view.findViewById(R.id.username));
+                            startSearchActivity(adapter.contacts.get(position),
+                                    view.findViewById(R.id.username),
+                                    view.findViewById(R.id.photo));
                         }
                     }
 
@@ -130,13 +133,15 @@ public class ContactsActivity extends RoboActionBarActivity implements
         listView.setItemAnimator(new DefaultItemAnimator());
     }
 
-    private void startSearchActivity(User user, View view) {
+    private void startSearchActivity(User user, View name, View photo) {
         Intent intent = new Intent(this, PrepareSearchActivity.class);
         intent.putExtra(PrepareSearchActivity.CONTACT, user);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             getWindow().setExitTransition(new Fade());
             ActivityOptions options = ActivityOptions
-                    .makeSceneTransitionAnimation(this, view, "name");
+                    .makeSceneTransitionAnimation(this,
+                            Pair.create(name, "name"),
+                            Pair.create(photo, "photo"));
             startActivity(intent, options.toBundle());
         } else {
             startActivity(intent);
