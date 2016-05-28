@@ -8,6 +8,8 @@
 
     <dimen name="contact_image">46dp</dimen>
     <dimen name="item_margin">8dp</dimen>
+
+    <dimen name="title">45sp</dimen>
     <dimen name="item_text">15sp</dimen>
     <dimen name="item_secondary_text">12sp</dimen>
 </resources>
