@@ -1,6 +1,8 @@
 package org.pasut.android.findme.activities;
 
 import android.os.Bundle;
+import android.util.Log;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import org.pasut.android.findme.R;
@@ -18,7 +20,21 @@ public class PrepareSearchActivity extends RoboActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         User contact = getIntent().getParcelableExtra(CONTACT);
+        populate(contact);
+    }
+
+    private void populate(final User user) {
         TextView text = (TextView) findViewById(R.id.name);
-        text.setText(contact.getName());
+        text.setText(user.getName());
+        ImageView photo = (ImageView) findViewById(R.id.photo);
+        if (user.getUri() == null) {
+            photo.setImageResource(R.drawable.ic_account_circle);
+        } else {
+            try {
+                photo.setImageURI(user.getUri());
+            } catch(NullPointerException e) {
+                Log.e(TAG, e.getMessage());
+            }
+        }
     }
 }
