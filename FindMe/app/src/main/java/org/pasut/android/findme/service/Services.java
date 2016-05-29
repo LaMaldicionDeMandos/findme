@@ -1,6 +1,7 @@
 package org.pasut.android.findme.service;
 
 import android.util.Log;
+import android.widget.Toast;
 
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
@@ -9,6 +10,7 @@ import com.firebase.client.ValueEventListener;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
+import org.pasut.android.findme.model.User;
 import org.pasut.android.findme.model.UserProfile;
 import org.pasut.android.findme.model.UserState;
 
@@ -26,7 +28,7 @@ public class Services {
     }
 
     public void signUp(final String accountId) {
-        final String userId = accountId.replaceAll("\\.","_");
+        final String userId = getFirebaseUserId(accountId);
         firebase.child(userId).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -47,5 +49,18 @@ public class Services {
             }
         });
         //firebase.child(user).setValue("USER");
+    }
+
+    private String getFirebaseUserId(final User user) {
+        return getFirebaseUserId(user.getId());
+    }
+
+    private String getFirebaseUserId(final String userId) {
+        return userId.replaceAll("\\.","_");
+    }
+
+    public void callContact(final User user, final ValueEventListener listener) {
+        String userId = getFirebaseUserId(user);
+        firebase.child(userId).addListenerForSingleValueEvent(listener);
     }
 }

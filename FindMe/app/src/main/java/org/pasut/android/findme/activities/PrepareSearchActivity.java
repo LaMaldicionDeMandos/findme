@@ -17,9 +17,18 @@ import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.firebase.client.DataSnapshot;
+import com.firebase.client.FirebaseError;
+import com.firebase.client.ValueEventListener;
+import com.google.inject.Inject;
 
 import org.pasut.android.findme.R;
 import org.pasut.android.findme.model.User;
+import org.pasut.android.findme.model.UserProfile;
+import org.pasut.android.findme.model.UserState;
+import org.pasut.android.findme.service.Services;
 
 import roboguice.activity.RoboActionBarActivity;
 import roboguice.inject.ContentView;
@@ -29,6 +38,8 @@ import roboguice.inject.InjectView;
 public class PrepareSearchActivity extends RoboActionBarActivity {
     private final static String TAG = PrepareSearchActivity.class.getSimpleName();
     public final static String CONTACT = "contact";
+
+    private User contact;
 
     @InjectView(R.id.main)
     ViewGroup main;
@@ -57,10 +68,13 @@ public class PrepareSearchActivity extends RoboActionBarActivity {
     @InjectView(R.id.circle2)
     View circle2;
 
+    @Inject
+    Services services;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        User contact = getIntent().getParcelableExtra(CONTACT);
+        contact = getIntent().getParcelableExtra(CONTACT);
         setupToolbar();
         populate(contact);
     }
@@ -126,5 +140,22 @@ public class PrepareSearchActivity extends RoboActionBarActivity {
         Animation anim2 = AnimationUtils.loadAnimation(this, R.anim.expand2);
         circle1.startAnimation(anim1);
         circle2.startAnimation(anim2);
+
+        services.callContact(contact, new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                Log.d(TAG, "Data changed " + dataSnapshot);
+                if (!dataSnapshot.exists()) {
+                    Toast.makeText(PrepareSearchActivity.this, "El usuario no existe en firebase", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(PrepareSearchActivity.this, "Oops todavia no esta implementado ", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onCancelled(FirebaseError firebaseError) {
+                Log.d(TAG, "Data canceled " + firebaseError);
+            }
+        });
     }
 }
