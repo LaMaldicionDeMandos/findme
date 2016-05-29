@@ -1,10 +1,11 @@
 package org.pasut.android.findme.activities;
 
+import android.content.DialogInterface;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
-import android.transition.AutoTransition;
 import android.transition.Explode;
 import android.transition.TransitionManager;
 import android.util.Log;
@@ -15,7 +16,6 @@ import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -124,6 +124,27 @@ public class PrepareSearchActivity extends RoboActionBarActivity {
     }
 
     public void search(View view) {
+        services.callContact(contact, new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                Log.d(TAG, "Data changed " + dataSnapshot);
+                if (dataSnapshot.exists()) {
+                    waitToSearch();
+                    Toast.makeText(PrepareSearchActivity.this, "Oops todavia no esta implementado ", Toast.LENGTH_SHORT).show();
+                } else {
+                    showSendSMSDialog(contact);
+                }
+            }
+
+            @Override
+            public void onCancelled(FirebaseError firebaseError) {
+                Log.d(TAG, "Data canceled " + firebaseError);
+                finish();
+            }
+        });
+    }
+
+    private void waitToSearch() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             TransitionManager.beginDelayedTransition(main, new Explode());
         }
@@ -140,22 +161,23 @@ public class PrepareSearchActivity extends RoboActionBarActivity {
         Animation anim2 = AnimationUtils.loadAnimation(this, R.anim.expand2);
         circle1.startAnimation(anim1);
         circle2.startAnimation(anim2);
+    }
 
-        services.callContact(contact, new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                Log.d(TAG, "Data changed " + dataSnapshot);
-                if (!dataSnapshot.exists()) {
-                    Toast.makeText(PrepareSearchActivity.this, "El usuario no existe en firebase", Toast.LENGTH_SHORT).show();
-                } else {
-                    Toast.makeText(PrepareSearchActivity.this, "Oops todavia no esta implementado ", Toast.LENGTH_SHORT).show();
-                }
-            }
-
-            @Override
-            public void onCancelled(FirebaseError firebaseError) {
-                Log.d(TAG, "Data canceled " + firebaseError);
-            }
-        });
+    private void showSendSMSDialog(final User user) {
+        new AlertDialog.Builder(PrepareSearchActivity.this)
+                .setTitle("Recomendar FIND ME?")
+                .setMessage(user.getName() + " no tiene FIND ME")
+                .setPositiveButton("INVITAR", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                })
+                .setNegativeButton("DISCARD", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                }).create().show();
     }
 }
