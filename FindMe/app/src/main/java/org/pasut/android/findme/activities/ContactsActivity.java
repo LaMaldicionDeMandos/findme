@@ -279,8 +279,7 @@ public class ContactsActivity extends RoboActionBarActivity implements
     }
 
     private void findContacts() {
-        Uri uri = ContactsContract.Contacts.CONTENT_URI;
-        uri = Uri.withAppendedPath(uri, ContactsContract.Contacts.Entity.CONTENT_DIRECTORY);
+        Uri uri = ContactsContract.Data.CONTENT_URI;
         Cursor cursor = getContentResolver().query(uri,
                 new String[]{ContactsContract.RawContacts.ACCOUNT_NAME,
                 ContactsContract.CommonDataKinds.StructuredName.DISPLAY_NAME,
