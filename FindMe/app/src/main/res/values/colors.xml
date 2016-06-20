@@ -3,6 +3,7 @@
     <color name="splash_background">#0288d1</color>
     <color name="logo">#ffffff</color>
     <color name="primary">#03a9f4</color>
+    <color name="primary_trans">#9903a9f4</color>
     <color name="primary_dark">#0288d1</color>
     <color name="accent">#4CAF50</color>
     <color name="text">#212121</color>
