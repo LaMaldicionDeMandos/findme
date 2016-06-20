@@ -1,11 +1,21 @@
 package org.pasut.android.findme.activities;
 
+import android.Manifest;
+import android.content.ContentResolver;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.ContactsContract;
+import android.provider.Settings;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
+import android.telephony.SmsManager;
 import android.transition.Explode;
 import android.transition.TransitionManager;
 import android.util.Log;
@@ -37,6 +47,7 @@ import roboguice.inject.InjectView;
 @ContentView(R.layout.activity_prepare_search)
 public class PrepareSearchActivity extends RoboActionBarActivity {
     private final static String TAG = PrepareSearchActivity.class.getSimpleName();
+    private final static int SEND_SMS_REQUEST = 5556;
 
     public final static String CONTACT = "contact";
 
@@ -74,6 +85,8 @@ public class PrepareSearchActivity extends RoboActionBarActivity {
 
     @Inject
     Services services;
+
+    private String phone;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -178,6 +191,64 @@ public class PrepareSearchActivity extends RoboActionBarActivity {
         circle2.startAnimation(anim2);
     }
 
+    private void sendSmsOrEmail(final User user) {
+        phone = findUserPhoneNumber(user);
+        if (phone == null) {
+            sendEmail(user.getId(), user);
+        } else {
+            sendSms(phone, user);
+        }
+    }
+
+    private void sendEmail(final String email, final User user) {
+
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           String permissions[], int[] grantResults) {
+        if (requestCode == SEND_SMS_REQUEST) {
+            sendSms(phone, contact);
+        }
+    }
+
+    private void sendSms(final String phone, final User user) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M ) {
+            int permission = ContextCompat.checkSelfPermission(this, Manifest.permission.SEND_SMS);
+            if (permission == PackageManager.PERMISSION_DENIED) {
+                requestPermissions(new String[]{Manifest.permission.SEND_SMS}, SEND_SMS_REQUEST);
+            } else {
+                sendSmsWithPermission(phone, user);
+            }
+        } else {
+            sendSmsWithPermission(phone, user);
+        }
+    }
+
+    private void sendSmsWithPermission(String phone, User user) {
+        try {
+            SmsManager smsManager = SmsManager.getDefault();
+            smsManager.sendTextMessage(phone, null, String.format(getString(R.string.sms), user.getName()),
+                    null, null);
+            Toast.makeText(this, getString(R.string.sms_sent), Toast.LENGTH_LONG).show();
+        }catch (Exception e) {
+            Toast.makeText(this, getString(R.string.can_not_send_message), Toast.LENGTH_LONG).show();
+        }
+    }
+
+    private String findUserPhoneNumber(final User user) {
+        Cursor cursor = getContentResolver().query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
+                new String[]{ContactsContract.CommonDataKinds.Phone.NUMBER},
+                ContactsContract.CommonDataKinds.Phone.CONTACT_ID + " = '" + user.getContactId() + "'", null, null);
+        String phone = null;
+        for (int i = 0; i < cursor.getCount(); i++) {
+            cursor.moveToNext();
+            phone = cursor.getString(0);
+            Log.d(TAG, "Found: Number: " + phone);
+        }
+        return phone;
+    }
+
     private void showSendSMSDialog(final User user) {
         new AlertDialog.Builder(PrepareSearchActivity.this)
                 .setTitle("Recomendar FIND ME?")
@@ -186,6 +257,7 @@ public class PrepareSearchActivity extends RoboActionBarActivity {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.dismiss();
+                        sendSmsOrEmail(user);
                     }
                 })
                 .setNegativeButton("DISCARD", new DialogInterface.OnClickListener() {
