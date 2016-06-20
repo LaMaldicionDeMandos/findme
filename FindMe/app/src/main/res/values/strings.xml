@@ -7,6 +7,8 @@
     <string name="add_contact_title">Import contacts?</string>
     <string name="add_contact_message">Let Findme import your Google+ contacts.</string>
     <string name="not_email_message">%s has not email.</string>
+    <string name="email_subject">I want to find you</string>
+    <string name="email">Hi! %s, I want to invite you to use Find Me. Download it today from https://findme.com</string>
     <string name="sms">Hi! %s, I want to invite you to use Find Me. Download it today from https://findme.com</string>
     <string name="sms_sent">Sending Message</string>
 

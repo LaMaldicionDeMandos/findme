@@ -1,17 +1,13 @@
 package org.pasut.android.findme.activities;
 
 import android.Manifest;
-import android.app.PendingIntent;
-import android.content.ContentResolver;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.ContactsContract;
-import android.provider.Settings;
+import android.support.v4.app.ShareCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
@@ -192,17 +188,23 @@ public class PrepareSearchActivity extends RoboActionBarActivity {
         circle2.startAnimation(anim2);
     }
 
-    private void sendSmsOrEmail(final User user) {
+    private void sendSmsAndEmail(final User user) {
         phone = findUserPhoneNumber(user);
-        if (phone == null) {
-            sendEmail(user.getId(), user);
-        } else {
+        if (phone != null) {
             sendSms(phone, user);
         }
+        sendEmail(user.getId(), user);
     }
 
     private void sendEmail(final String email, final User user) {
-
+        ShareCompat.IntentBuilder.from(this)
+                .setType("message/rfc822")
+                .addEmailTo(email)
+                .setSubject(getString(R.string.email_subject))
+                .setText(String.format(getString(R.string.email), user.getName()))
+                //.setHtmlText(body) //If you are using HTML in your body text
+                .setChooserTitle("Send Email")
+                .startChooser();
     }
 
     @Override
@@ -259,7 +261,7 @@ public class PrepareSearchActivity extends RoboActionBarActivity {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.dismiss();
-                        sendSmsOrEmail(user);
+                        sendSmsAndEmail(user);
                     }
                 })
                 .setNegativeButton("DISCARD", new DialogInterface.OnClickListener() {
