@@ -111,6 +111,12 @@ public class PrepareSearchActivity extends RoboActionBarActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    protected void onStop() {
+        services.removeListener(callEventListener);
+        super.onStop();
+    }
+
     private void setupToolbar(){
         setSupportActionBar(toolbar);
         // Show menu icon
@@ -153,7 +159,7 @@ public class PrepareSearchActivity extends RoboActionBarActivity {
                 Log.d(TAG, "Data changed " + dataSnapshot);
                 if (dataSnapshot.exists()) {
                     waitToSearch();
-                    Toast.makeText(PrepareSearchActivity.this, "Oops todavia no esta implementado ", Toast.LENGTH_SHORT).show();
+                    services.callToContact(contact, callEventListener);
                 } else {
                     showSendSMSDialog(contact);
                 }
@@ -271,4 +277,30 @@ public class PrepareSearchActivity extends RoboActionBarActivity {
                     }
                 }).create().show();
     }
+
+    private ValueEventListener callEventListener = new ValueEventListener() {
+
+        @Override
+        public void onDataChange(DataSnapshot dataSnapshot) {
+            Log.d(TAG, "Data changed " + dataSnapshot);
+            if (!dataSnapshot.exists()) {
+                Log.d(TAG, "Request deleted, remove listener");
+                Toast.makeText(PrepareSearchActivity.this, "Llamada rechazada",
+                        Toast.LENGTH_LONG).show();
+                services.removeListener(this);
+            } else {
+                String state = dataSnapshot.getValue(String.class);
+                Log.d(TAG, "Request status: " + state);
+                if (state.equals("on")) {
+                    Toast.makeText(PrepareSearchActivity.this, "Llamada aceptada, pero aun no implementada",
+                            Toast.LENGTH_SHORT).show();
+                }
+            }
+        }
+
+        @Override
+        public void onCancelled(FirebaseError firebaseError) {
+
+        }
+    };
 }
