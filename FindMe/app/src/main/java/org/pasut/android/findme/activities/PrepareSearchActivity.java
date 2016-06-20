@@ -1,6 +1,7 @@
 package org.pasut.android.findme.activities;
 
 import android.Manifest;
+import android.app.PendingIntent;
 import android.content.ContentResolver;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -228,6 +229,7 @@ public class PrepareSearchActivity extends RoboActionBarActivity {
     private void sendSmsWithPermission(String phone, User user) {
         try {
             SmsManager smsManager = SmsManager.getDefault();
+
             smsManager.sendTextMessage(phone, null, String.format(getString(R.string.sms), user.getName()),
                     null, null);
             Toast.makeText(this, getString(R.string.sms_sent), Toast.LENGTH_LONG).show();
