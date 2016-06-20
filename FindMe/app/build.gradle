@@ -10,6 +10,8 @@ android {
         exclude 'META-INF/NOTICE.txt'
         exclude 'META-INF/NOTICE'
         exclude 'META-INF/LICENSE-FIREBASE.txt'
+        exclude 'META-INF/maven/com.google.guava/guava/pom.properties'
+        exclude 'META-INF/maven/com.google.guava/guava/pom.xml'
 
     }
 
@@ -81,6 +83,8 @@ dependencies {
     compile 'com.google.code.gson:gson:2.2.+'
     compile 'org.roboguice:roboguice:3.+'
     compile 'com.google.guava:guava:18.+'
+    compile 'com.github.bumptech.glide:glide:3.7.0'
+    compile 'jp.wasabeef:glide-transformations:2.0.1'
 
     compile 'com.firebase:firebase-client-android:2.4.0'
 

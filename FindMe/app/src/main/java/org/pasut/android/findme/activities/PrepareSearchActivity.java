@@ -1,8 +1,15 @@
 package org.pasut.android.findme.activities;
 
 import android.content.DialogInterface;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.MediaStore;
+import android.renderscript.Allocation;
+import android.renderscript.Element;
+import android.renderscript.RenderScript;
+import android.renderscript.ScriptIntrinsicBlur;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
@@ -19,6 +26,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.FirebaseError;
 import com.firebase.client.ValueEventListener;
@@ -26,10 +34,12 @@ import com.google.inject.Inject;
 
 import org.pasut.android.findme.R;
 import org.pasut.android.findme.model.User;
-import org.pasut.android.findme.model.UserProfile;
-import org.pasut.android.findme.model.UserState;
 import org.pasut.android.findme.service.Services;
 
+import java.net.URI;
+import java.net.URL;
+
+import jp.wasabeef.glide.transformations.BlurTransformation;
 import roboguice.activity.RoboActionBarActivity;
 import roboguice.inject.ContentView;
 import roboguice.inject.InjectView;
@@ -37,6 +47,8 @@ import roboguice.inject.InjectView;
 @ContentView(R.layout.activity_prepare_search)
 public class PrepareSearchActivity extends RoboActionBarActivity {
     private final static String TAG = PrepareSearchActivity.class.getSimpleName();
+    private static final float BLUR_RADIUS = 20f;
+
     public final static String CONTACT = "contact";
 
     private User contact;
@@ -107,6 +119,11 @@ public class PrepareSearchActivity extends RoboActionBarActivity {
     private void populate(final User user) {
         TextView text = (TextView) findViewById(R.id.name);
         text.setText(user.getName());
+        findText.setText(String.format(getString(R.string.searching_person), user.getName()));
+        populatePhoto(user);
+    }
+
+    private void populatePhoto(final User user) {
         ImageView photo = (ImageView) findViewById(R.id.photo);
         ImageView searchPhoto = (ImageView) findViewById(R.id.search_photo);
         if (user.getUri() == null) {
@@ -116,11 +133,12 @@ public class PrepareSearchActivity extends RoboActionBarActivity {
             try {
                 photo.setImageURI(user.getUri());
                 searchPhoto.setImageURI(user.getUri());
-            } catch(NullPointerException e) {
+            } catch(Exception e) {
                 Log.e(TAG, e.getMessage());
             }
         }
-        findText.setText(String.format(getString(R.string.searching_person), user.getName()));
+        Glide.with(this).load(user.getUri()).bitmapTransform(new BlurTransformation(this, 15))
+                .into(photo);
     }
 
     public void search(View view) {
