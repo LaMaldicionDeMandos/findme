@@ -14,18 +14,22 @@ import java.util.Date;
  */
 public class User implements Parcelable {
     private final String id;
+    private final String contactId;
     private final String name;
     private final UserProfile profile;
     private final Uri uri;
     private final long lastAccess;
 
-    public User(final String id, final String name, final Uri uri, final UserProfile profile) {
-        this(id, name, uri, profile, new Date().getTime());
+    public User(final String id, final String contactId, final String name, final Uri uri,
+                final UserProfile profile) {
+        this(id, contactId, name, uri, profile, new Date().getTime());
     }
 
-    public User(final String id, final String name, final Uri uri, final UserProfile profile,
+    public User(final String id, final String contactId, final String name, final Uri uri,
+                final UserProfile profile,
                 final long lastAccess) {
         this.id = id;
+        this.contactId = contactId;
         this.name = name;
         this.profile = profile;
         this.uri = uri;
@@ -34,6 +38,10 @@ public class User implements Parcelable {
 
     public String getId() {
         return id;
+    }
+
+    public String getContactId() {
+        return contactId;
     }
 
     public String getName() {
@@ -68,6 +76,7 @@ public class User implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(this.id);
+        dest.writeString(this.contactId);
         dest.writeString(this.name);
         dest.writeParcelable(this.profile, flags);
         dest.writeParcelable(this.uri, flags);
@@ -76,6 +85,7 @@ public class User implements Parcelable {
 
     protected User(Parcel in) {
         this.id = in.readString();
+        this.contactId = in.readString();
         this.name = in.readString();
         this.profile = in.readParcelable(UserProfile.class.getClassLoader());
         this.uri = in.readParcelable(Uri.class.getClassLoader());
@@ -103,6 +113,7 @@ public class User implements Parcelable {
     public String toString() {
         return MoreObjects.toStringHelper(User.class)
                 .add("id", id)
+                .add("contactId", contactId)
                 .add("name", name)
                 .add("avatar", uri)
                 .add("profile", profile)

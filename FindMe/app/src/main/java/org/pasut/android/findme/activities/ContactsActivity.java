@@ -241,7 +241,7 @@ public class ContactsActivity extends RoboActionBarActivity implements
             String photo = cursor.getString(3);
             Log.d(TAG, id + " display name: " + name + " Email: " + email + " Photo: " + photo);
             uri = photo == null ? null : Uri.parse(photo);
-            User user = new User(email, name, uri, new UserProfile(UserState.UNKNOW), new Date().getTime());
+            User user = new User(email, id, name, uri, new UserProfile(UserState.UNKNOW), new Date().getTime());
             if (!users.contains(user)) {
                 addContact(id, user);
             }
@@ -281,7 +281,8 @@ public class ContactsActivity extends RoboActionBarActivity implements
     private void findContacts() {
         Uri uri = ContactsContract.Data.CONTENT_URI;
         Cursor cursor = getContentResolver().query(uri,
-                new String[]{ContactsContract.RawContacts.ACCOUNT_NAME,
+                new String[]{ContactsContract.RawContacts.CONTACT_ID,
+                ContactsContract.RawContacts.ACCOUNT_NAME,
                 ContactsContract.CommonDataKinds.StructuredName.DISPLAY_NAME,
                 ContactsContract.Contacts.Photo.PHOTO_URI,
                 ContactsContract.RawContacts.LAST_TIME_CONTACTED},
@@ -289,13 +290,14 @@ public class ContactsActivity extends RoboActionBarActivity implements
                 null, null);
         for (int i = 0; i < cursor.getCount(); i++) {
             cursor.moveToNext();
-            String email = cursor.getString(0);
-            String name = cursor.getString(1);
-            String photo = cursor.getString(2);
-            long lastAccess = cursor.getLong(3);
+            String id = cursor.getString(0);
+            String email = cursor.getString(1);
+            String name = cursor.getString(2);
+            String photo = cursor.getString(3);
+            long lastAccess = cursor.getLong(4);
             Log.d(TAG, "Found: display name: " + name + " Email: " + email + " Photo: " + photo);
             uri = photo == null ? null : Uri.parse(photo);
-            User user = new User(email, name, uri, new UserProfile(UserState.UNKNOW), lastAccess);
+            User user = new User(email, id, name, uri, new UserProfile(UserState.UNKNOW), lastAccess);
             contacts.add(user);
         }
         runOnUiThread(new Runnable() {
@@ -342,7 +344,7 @@ public class ContactsActivity extends RoboActionBarActivity implements
                     String name = userCursor.getString(1);
                     String photo = userCursor.getString(2);
                     Uri uri = photo == null ? null : Uri.parse(photo);
-                    User user = new User(email, name, uri, new UserProfile(UserState.UNKNOW));
+                    User user = new User(email, id, name, uri, new UserProfile(UserState.UNKNOW));
                     addContact(id, user);
                     contacts.add(user);
                     listView.getAdapter().notifyDataSetChanged();

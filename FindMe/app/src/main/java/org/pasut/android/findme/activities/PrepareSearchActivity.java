@@ -1,15 +1,8 @@
 package org.pasut.android.findme.activities;
 
 import android.content.DialogInterface;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.Build;
 import android.os.Bundle;
-import android.provider.MediaStore;
-import android.renderscript.Allocation;
-import android.renderscript.Element;
-import android.renderscript.RenderScript;
-import android.renderscript.ScriptIntrinsicBlur;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
@@ -36,9 +29,6 @@ import org.pasut.android.findme.R;
 import org.pasut.android.findme.model.User;
 import org.pasut.android.findme.service.Services;
 
-import java.net.URI;
-import java.net.URL;
-
 import jp.wasabeef.glide.transformations.BlurTransformation;
 import roboguice.activity.RoboActionBarActivity;
 import roboguice.inject.ContentView;
@@ -47,7 +37,6 @@ import roboguice.inject.InjectView;
 @ContentView(R.layout.activity_prepare_search)
 public class PrepareSearchActivity extends RoboActionBarActivity {
     private final static String TAG = PrepareSearchActivity.class.getSimpleName();
-    private static final float BLUR_RADIUS = 20f;
 
     public final static String CONTACT = "contact";
 
