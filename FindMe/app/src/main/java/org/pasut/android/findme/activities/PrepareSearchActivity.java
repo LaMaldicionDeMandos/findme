@@ -68,6 +68,9 @@ public class PrepareSearchActivity extends RoboActionBarActivity {
     @InjectView(R.id.search_photo)
     View searchPhoto;
 
+    @InjectView(R.id.profile_photo)
+    View profilePhoto;
+
     @InjectView(R.id.find_text)
     TextView findText;
 
@@ -126,18 +129,21 @@ public class PrepareSearchActivity extends RoboActionBarActivity {
     private void populatePhoto(final User user) {
         ImageView photo = (ImageView) findViewById(R.id.photo);
         ImageView searchPhoto = (ImageView) findViewById(R.id.search_photo);
+        ImageView profilePhoto = (ImageView) findViewById(R.id.profile_photo);
         if (user.getUri() == null) {
             photo.setImageResource(R.drawable.ic_account_circle);
+            profilePhoto.setImageResource(R.drawable.ic_account_circle);
             searchPhoto.setImageResource(R.drawable.ic_account_circle);
         } else {
             try {
                 photo.setImageURI(user.getUri());
+                profilePhoto.setImageURI(user.getUri());
                 searchPhoto.setImageURI(user.getUri());
             } catch(Exception e) {
                 Log.e(TAG, e.getMessage());
             }
         }
-        Glide.with(this).load(user.getUri()).bitmapTransform(new BlurTransformation(this, 15))
+        Glide.with(this).load(user.getUri()).bitmapTransform(new BlurTransformation(this, 20))
                 .into(photo);
     }
 
@@ -166,7 +172,9 @@ public class PrepareSearchActivity extends RoboActionBarActivity {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             TransitionManager.beginDelayedTransition(main, new Explode());
         }
+
         findText.setVisibility(View.VISIBLE);
+        profilePhoto.setVisibility(View.INVISIBLE);
         searchPhoto.setVisibility(View.VISIBLE);
         callButton.setVisibility(View.INVISIBLE);
         circle1.setVisibility(View.VISIBLE);
