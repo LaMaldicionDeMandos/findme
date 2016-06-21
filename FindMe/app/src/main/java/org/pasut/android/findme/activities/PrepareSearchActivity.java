@@ -2,6 +2,7 @@ package org.pasut.android.findme.activities;
 
 import android.Manifest;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.os.Build;
@@ -27,9 +28,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-import com.firebase.client.DataSnapshot;
-import com.firebase.client.FirebaseError;
-import com.firebase.client.ValueEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.ValueEventListener;
 import com.google.inject.Inject;
 
 import org.pasut.android.findme.R;
@@ -112,9 +113,9 @@ public class PrepareSearchActivity extends RoboActionBarActivity {
     }
 
     @Override
-    protected void onStop() {
+    protected void onDestroy() {
         services.removeListener(callEventListener);
-        super.onStop();
+        super.onDestroy();
     }
 
     private void setupToolbar(){
@@ -166,7 +167,7 @@ public class PrepareSearchActivity extends RoboActionBarActivity {
             }
 
             @Override
-            public void onCancelled(FirebaseError firebaseError) {
+            public void onCancelled(DatabaseError firebaseError) {
                 Log.d(TAG, "Data canceled " + firebaseError);
                 finish();
             }
@@ -287,19 +288,20 @@ public class PrepareSearchActivity extends RoboActionBarActivity {
                 Log.d(TAG, "Request deleted, remove listener");
                 Toast.makeText(PrepareSearchActivity.this, "Llamada rechazada",
                         Toast.LENGTH_LONG).show();
-                services.removeListener(this);
+                finish();
             } else {
                 String state = dataSnapshot.getValue(String.class);
                 Log.d(TAG, "Request status: " + state);
                 if (state.equals("on")) {
-                    Toast.makeText(PrepareSearchActivity.this, "Llamada aceptada, pero aun no implementada",
-                            Toast.LENGTH_SHORT).show();
+                    services.removeListener(this);
+                    startActivity(new Intent(PrepareSearchActivity.this, FindActivity.class));
+                    finish();
                 }
             }
         }
 
         @Override
-        public void onCancelled(FirebaseError firebaseError) {
+        public void onCancelled(DatabaseError firebaseError) {
 
         }
     };

@@ -1,6 +1,7 @@
 package org.pasut.android.findme.providers;
 
-import com.firebase.client.Firebase;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.inject.Provider;
 import com.google.inject.Singleton;
 
@@ -12,17 +13,17 @@ import roboguice.inject.InjectResource;
  * Created by boot on 3/24/16.
  */
 @Singleton
-public class FirebaseProvider implements Provider<Firebase>{
+public class FirebaseProvider implements Provider<DatabaseReference>{
     private final static String TAG = FirebaseProvider.class.getSimpleName();
     @InjectResource(R.string.firebase_url)
     private String url;
 
-    private Firebase firebase;
+    private DatabaseReference firebase;
 
     @Override
-    public Firebase get() {
+    public DatabaseReference get() {
         if (firebase == null) {
-            firebase = new Firebase(url);
+            firebase = FirebaseDatabase.getInstance().getReference();
         }
         return firebase;
     }

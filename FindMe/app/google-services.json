@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "140582248625",
+    "firebase_url": "https://pasut-findme.firebaseio.com",
+    "project_id": "pasut-findme",
+    "storage_bucket": "pasut-findme.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:140582248625:android:4a74761e3dd64ad1",
+        "android_client_info": {
+          "package_name": "org.pasut.android.findme"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "140582248625-264lr93nkc9gre58150sed9fn68eok3c.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDTqcq7G16-zYDORUMIwCgqlEJAug6dl5M"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

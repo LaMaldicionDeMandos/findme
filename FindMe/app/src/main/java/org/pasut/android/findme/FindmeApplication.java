@@ -4,8 +4,6 @@ import android.app.Application;
 import android.content.Context;
 import android.support.multidex.MultiDex;
 
-import com.firebase.client.Firebase;
-
 import roboguice.RoboGuice;
 
 /**
@@ -19,7 +17,6 @@ public class FindmeApplication extends Application {
     public void onCreate() {
         super.onCreate();
         MultiDex.install(this);
-        Firebase.setAndroidContext(this);
         RoboGuice.setUseAnnotationDatabases(false);
         RoboGuice.getOrCreateBaseApplicationInjector(this, RoboGuice.DEFAULT_STAGE,
                 RoboGuice.newDefaultRoboModule(this), new FindmeModule());

@@ -1,6 +1,6 @@
 package org.pasut.android.findme;
 
-import com.firebase.client.Firebase;
+import com.google.firebase.database.DatabaseReference;
 import com.google.inject.Binder;
 import com.google.inject.Module;
 
@@ -16,7 +16,7 @@ public class FindmeModule implements Module {
     @Override
     public void configure(Binder binder) {
         binder.bind(PreferencesService.class).to(DefaultPreferencesService.class);
-        binder.bind(Firebase.class).toProvider(FirebaseProvider.class);
+        binder.bind(DatabaseReference.class).toProvider(FirebaseProvider.class);
         binder.bind(Services.class);
     }
 }

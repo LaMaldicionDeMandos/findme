@@ -1,12 +1,11 @@
 package org.pasut.android.findme.service;
 
 import android.util.Log;
-import android.widget.Toast;
 
-import com.firebase.client.DataSnapshot;
-import com.firebase.client.Firebase;
-import com.firebase.client.FirebaseError;
-import com.firebase.client.ValueEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.ValueEventListener;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
@@ -15,9 +14,6 @@ import org.pasut.android.findme.model.User;
 import org.pasut.android.findme.model.UserProfile;
 import org.pasut.android.findme.model.UserState;
 
-import java.util.HashMap;
-import java.util.Map;
-
 /**
  * Created by boot on 10/2/15.
  */
@@ -25,10 +21,10 @@ import java.util.Map;
 public class Services {
     private final static String TAG = Services.class.getSimpleName();
     private final PreferencesService preferences;
-    private final Firebase firebase;
+    private final DatabaseReference firebase;
 
     @Inject
-    public Services(final Firebase firebase, final PreferencesService preferences) {
+    public Services(final DatabaseReference firebase, final PreferencesService preferences) {
         this.firebase = firebase;
         this.preferences = preferences;
     }
@@ -55,11 +51,10 @@ public class Services {
             }
 
             @Override
-            public void onCancelled(FirebaseError firebaseError) {
+            public void onCancelled(DatabaseError firebaseError) {
                 Log.d(TAG, "Data canceled " + firebaseError);
             }
         });
-        //firebase.child(user).setValue("USER");
     }
 
     private String getFirebaseUserId(final User user) {
