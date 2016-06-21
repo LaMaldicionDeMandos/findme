@@ -286,7 +286,7 @@ public class PrepareSearchActivity extends RoboActionBarActivity {
             Log.d(TAG, "Data changed " + dataSnapshot);
             if (!dataSnapshot.exists()) {
                 Log.d(TAG, "Request deleted, remove listener");
-                Toast.makeText(PrepareSearchActivity.this, "Llamada rechazada",
+                Toast.makeText(PrepareSearchActivity.this, getString(R.string.call_rejected),
                         Toast.LENGTH_LONG).show();
                 finish();
             } else {
@@ -294,7 +294,9 @@ public class PrepareSearchActivity extends RoboActionBarActivity {
                 Log.d(TAG, "Request status: " + state);
                 if (state.equals("on")) {
                     services.removeListener(this);
-                    startActivity(new Intent(PrepareSearchActivity.this, FindActivity.class));
+                    Intent intent = new Intent(PrepareSearchActivity.this, FindActivity.class);
+                    intent.putExtra(CONTACT, contact);
+                    startActivity(intent);
                     finish();
                 }
             }
