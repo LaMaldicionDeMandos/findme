@@ -99,6 +99,7 @@
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/exploded-aar/com.google.android.gms/play-services-base/9.0.2/jars" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/exploded-aar/com.google.android.gms/play-services-basement/9.0.2/jars" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/exploded-aar/com.google.android.gms/play-services-identity/9.0.2/jars" />
+      <excludeFolder url="file://$MODULE_DIR$/build/intermediates/exploded-aar/com.google.android.gms/play-services-maps/9.0.2/jars" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/exploded-aar/com.google.android.gms/play-services-plus/9.0.2/jars" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/exploded-aar/com.google.android.gms/play-services-tasks/9.0.2/jars" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/exploded-aar/com.google.firebase/firebase-analytics-impl/9.0.2/jars" />
@@ -118,8 +119,6 @@
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/instant-run-support" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/jniLibs" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/manifests" />
-      <excludeFolder url="file://$MODULE_DIR$/build/intermediates/multi-dex" />
-      <excludeFolder url="file://$MODULE_DIR$/build/intermediates/reload-dex" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/res" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/restart-dex" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/rs" />
@@ -155,11 +154,12 @@
     <orderEntry type="library" exported="" name="guava-18.0" level="project" />
     <orderEntry type="library" exported="" name="play-services-auth-base-9.0.2" level="project" />
     <orderEntry type="library" exported="" name="play-services-basement-9.0.2" level="project" />
+    <orderEntry type="library" exported="" name="play-services-maps-9.0.2" level="project" />
     <orderEntry type="library" exported="" name="cardview-v7-23.0.1" level="project" />
     <orderEntry type="library" exported="" name="play-services-tasks-9.0.2" level="project" />
     <orderEntry type="library" exported="" name="design-23.0.1" level="project" />
-    <orderEntry type="library" exported="" name="robospice-cache-1.4.14" level="project" />
     <orderEntry type="library" exported="" name="robospice-1.4.14" level="project" />
+    <orderEntry type="library" exported="" name="robospice-cache-1.4.14" level="project" />
     <orderEntry type="library" exported="" name="firebase-database-connection-9.0.2" level="project" />
     <orderEntry type="library" exported="" name="firebase-analytics-impl-9.0.2" level="project" />
     <orderEntry type="library" exported="" name="roboguice-3.0.1" level="project" />
