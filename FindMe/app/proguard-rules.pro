@@ -22,6 +22,19 @@
 # This rule will properly ProGuard all the model classes in
 # the package com.yourcompany.models. Modify to fit the structure
 # of your app.
--keepclassmembers class org.pasut.android.findme.model.** {
+-keepclassmembers class org.pasut.android.findme.model.User {
   *;
+}
+
+-keepclassmembers class org.pasut.android.findme.model.UserProfile {
+  *;
+}
+
+-keep public enum org.pasut.android.findme.model.** {
+  *;
+}
+
+-keep public enum org.pasut.android.findme.model.UserState {
+    public static **[] values();
+    public static ** valueOf(java.lang.String);
 }
