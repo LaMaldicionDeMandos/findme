@@ -4,6 +4,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 import com.google.common.base.MoreObjects;
+import com.google.firebase.database.Exclude;
 
 import java.io.Serializable;
 
@@ -21,8 +22,17 @@ public class UserProfile implements Parcelable {
         this.state = state;
     }
 
+    @Exclude
     public UserState getState() {
         return state;
+    }
+
+    public String getUserStateString() {
+        return state.toString();
+    }
+
+    public void setUserStateString(final String state) {
+        this.state = UserState.valueOf(state);
     }
 
     public void activate() {

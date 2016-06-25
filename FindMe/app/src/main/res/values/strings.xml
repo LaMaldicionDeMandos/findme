@@ -27,4 +27,5 @@
 
     <string name="searching_person">Finding %s.</string>
     <string name="can_not_send_message">Ops! can not send message.</string>
+
 </resources>
